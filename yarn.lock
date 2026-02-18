@@ -1983,6 +1983,11 @@ react-is@^19.2.3:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.2.4.tgz#a080758243c572ccd4a63386537654298c99d135"
   integrity sha512-W+EWGn2v0ApPKgKKCy/7s7WHXkboGcsrXE+2joLyVxkbyVQfO3MUEaUQDHoSmb8TFFrSKYa9mw64WZHNHSDzYA==
 
+react-native-ping@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/react-native-ping/-/react-native-ping-1.2.8.tgz#c84a944cad50e7874f35b3f8bf884cd08333575e"
+  integrity sha512-yqUJuaoZKi6DclNIppTEKJinppwD0OHzcDkLwtClbLwaYIUrZeMuuAM0iBgeyZeDgNt1DWA4Nr86ictuA48xuA==
+
 react-redux@^9.2.0:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-9.2.0.tgz#96c3ab23fb9a3af2cb4654be4b51c989e32366f5"

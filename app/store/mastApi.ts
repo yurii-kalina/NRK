@@ -50,7 +50,20 @@ const baseQuery = async (args: any, api: any, extraOptions: any) => {
 export const mastApi = createApi({
     reducerPath: "mastApi",
     baseQuery,
-    tagTypes: ["MastConfig", "MastState", "MastVertical", "MastAngle", "MastSetHigh", "MastForceHigh"],
+    tagTypes: [
+        "MastConfig",
+        "MastState",
+        "MastVertical",
+        "MastAngle",
+        "MastSetHigh",
+        "MastForceHigh",
+
+        // --- Bridg tags
+        "BridgState",
+        "BridgAzimuth",
+        "BridgCalib",
+        "BridgWifi",
+    ],
     endpoints: (builder) => ({
         state: builder.mutation<MastResp, void>({
             query: () => ({ url: "/mast", method: "POST", body: { task: "s", value: 0 } }),
@@ -72,6 +85,31 @@ export const mastApi = createApi({
             query: (height: number) => ({ url: "/mast", method: "POST", body: { task: "f", value: height } }),
             invalidatesTags: ["MastForceHigh"],
         }),
+
+        // -------- Bridg --------
+        // get_state
+        bridgState: builder.mutation<MastResp, void>({
+            query: () => ({ url: "/bridge", method: "POST", body: { task: "d", value: 0 } }),
+            invalidatesTags: ["BridgState"],
+        }),
+
+        // set_azimuth_angle
+        bridgSetAzimuthAngle: builder.mutation<MastResp, number>({
+            query: (angle: number) => ({ url: "/bridge", method: "POST", body: { task: "a", value: angle } }),
+            invalidatesTags: ["BridgAzimuth"],
+        }),
+
+        // azimust_calibration (як у postman: task "c")
+        bridgAzimuthCalibration: builder.mutation<MastResp, void>({
+            query: () => ({ url: "/bridge", method: "POST", body: { task: "c", value: 0 } }),
+            invalidatesTags: ["BridgCalib"],
+        }),
+
+        // wifi_search (task "s")
+        bridgWifiSearch: builder.mutation<MastResp, void>({
+            query: () => ({ url: "/bridge", method: "POST", body: { task: "s", value: 0 } }),
+            invalidatesTags: ["BridgWifi"],
+        }),
     }),
 });
 
@@ -81,6 +119,10 @@ export const {
     useAngleMutation,
     useSetHeightMutation,
     useForceHeightMutation,
+    useBridgStateMutation,
+    useBridgSetAzimuthAngleMutation,
+    useBridgAzimuthCalibrationMutation,
+    useBridgWifiSearchMutation,
 } = mastApi;
 
 export const mastStorage = {
