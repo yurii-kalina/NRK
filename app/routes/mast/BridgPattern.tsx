@@ -10,30 +10,52 @@ type Point = { angle: number; signal: number };
 function parseLogToPoints(text: string): Point[] {
     if (!text) return [];
 
-    const re = /strength_map\[(\d+)\]\[0\]\s*=\s*(-?\d+)/g;
+    // Підтримує будь-який другий індекс:
+    // r_status->estim_data->strength_map[40][3] = -74
+    // r_status->estim_data->strength_map[255][20] = -75
+    const re = /strength_map\[(\d+)\]\[(\d+)\]\s*=\s*(-?\d+)/g;
 
-    const map = new Map<number, number[]>();
+    // збираємо сигнали по куту
+    const byAngle = new Map<number, number[]>();
+
+    // щоб потім замінити -999 на мінімальний валідний
+    let minValid: number | null = null;
+
     let m: RegExpExecArray | null;
-
     while ((m = re.exec(text)) !== null) {
         const angle = Number(m[1]);
-        const signal = Number(m[2]);
+        const signal = Number(m[3]);
+
         if (!Number.isFinite(angle) || !Number.isFinite(signal)) continue;
 
-        if (!map.has(angle)) map.set(angle, []);
-        map.get(angle)!.push(signal);
+        // шукаємо мінімальний валідний (НЕ -999)
+        if (signal !== -999) {
+            if (minValid === null || signal < minValid) minValid = signal;
+        }
+
+        if (!byAngle.has(angle)) byAngle.set(angle, []);
+        byAngle.get(angle)!.push(signal);
     }
 
-    // якщо один кут кілька разів — усереднюємо
+    // якщо валідних немає — нема що малювати
+    if (minValid === null) return [];
+
     const points: Point[] = [];
-    for (const [angle, arr] of map.entries()) {
-        const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
-        points.push({ angle, signal: avg });
+
+    for (const [angle, arr] of byAngle.entries()) {
+        // заміна -999 на мінімальний валідний
+        const fixed = arr.map((s) => (s === -999 ? minValid! : s));
+
+        // якщо по одному куту багато значень (через різні [][index]) — беремо "краще" (максимальний, бо -70 краще ніж -80)
+        const best = Math.max(...fixed);
+
+        points.push({ angle, signal: best });
     }
 
     points.sort((a, b) => a.angle - b.angle);
     return points;
 }
+
 
 function clamp01(v: number) {
     return Math.max(0, Math.min(1, v));

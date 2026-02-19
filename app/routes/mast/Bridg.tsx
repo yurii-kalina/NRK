@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {
     Box,
     Button,
@@ -54,6 +54,7 @@ export default function Bridg() {
     const [stateData, setStateData] = useState<BridgState | null>(null);
     const [angleDegInput, setAngleDegInput] = useState<string>("");
     const [deviceBusy, setDeviceBusy] = useState(false);
+    const didInitState = useRef(false);
 
     const cmdBusy =
         deviceBusy ||
@@ -101,6 +102,9 @@ export default function Bridg() {
     }, []);
 
     useEffect(() => {
+        if (didInitState.current) return;
+        didInitState.current = true;
+
         fetchState(false);
     }, []);
 
