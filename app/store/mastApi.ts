@@ -1,9 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type MastConfig = { ip: string };
-export type SetIpReq = { ip: string };
-
-export type MastReq = { task: string; value: number };
 export type MastResp = any;
 
 export const LS_MAST_HOST = "mast_host";
@@ -58,11 +55,10 @@ export const mastApi = createApi({
         "MastSetHigh",
         "MastForceHigh",
 
-        // --- Bridg tags
         "BridgState",
         "BridgAzimuth",
         "BridgCalib",
-        "BridgWifi",
+        "BridgWifi"
     ],
     endpoints: (builder) => ({
         state: builder.mutation<MastResp, void>({
@@ -87,28 +83,32 @@ export const mastApi = createApi({
         }),
 
         // -------- Bridg --------
-        // get_state
         bridgState: builder.mutation<MastResp, void>({
             query: () => ({ url: "/bridge", method: "POST", body: { task: "d", value: 0 } }),
             invalidatesTags: ["BridgState"],
         }),
 
-        // set_azimuth_angle
         bridgSetAzimuthAngle: builder.mutation<MastResp, number>({
             query: (angle: number) => ({ url: "/bridge", method: "POST", body: { task: "a", value: angle } }),
             invalidatesTags: ["BridgAzimuth"],
         }),
 
-        // azimust_calibration (як у postman: task "c")
         bridgAzimuthCalibration: builder.mutation<MastResp, void>({
             query: () => ({ url: "/bridge", method: "POST", body: { task: "c", value: 0 } }),
             invalidatesTags: ["BridgCalib"],
         }),
 
-        // wifi_search (task "s")
         bridgWifiSearch: builder.mutation<MastResp, void>({
             query: () => ({ url: "/bridge", method: "POST", body: { task: "s", value: 0 } }),
             invalidatesTags: ["BridgWifi"],
+        }),
+
+        bridgLog: builder.query<string, void>({
+            query: () => ({
+                url: "/log",
+                method: "GET",
+                responseHandler: "text",
+            }),
         }),
     }),
 });
@@ -123,6 +123,8 @@ export const {
     useBridgSetAzimuthAngleMutation,
     useBridgAzimuthCalibrationMutation,
     useBridgWifiSearchMutation,
+    useBridgLogQuery,
+    useLazyBridgLogQuery,
 } = mastApi;
 
 export const mastStorage = {

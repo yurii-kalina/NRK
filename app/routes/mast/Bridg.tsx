@@ -23,6 +23,7 @@ import {
     useBridgAzimuthCalibrationMutation,
     useBridgWifiSearchMutation,
 } from "~/store/mastApi";
+import BridgPattern from "~/routes/mast/BridgPattern";
 
 type BridgState = {
     Azimuth_current_steps?: number;
@@ -410,6 +411,9 @@ export default function Bridg() {
                                 </Box>
                             </CardContent>
                         </Card>
+                        <Grid size={{ xs: 12 }}>
+                            <BridgPattern />
+                        </Grid>
                     </Grid>
                 </Grid>
             </Container>
